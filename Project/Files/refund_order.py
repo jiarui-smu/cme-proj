@@ -3,7 +3,7 @@ from flask_cors import CORS
 from twilio.rest import Client
 import stripe
 # This is your test secret API key.
-stripe.api_key = 'sk_test_51Ml6VEApb0N8o5GMbfEwVXAQn6XxeoXwm8OI7p2KvhjGjER9XiUxdRsWBVsYrLqpiZZeVadJA3vtJjkIKCQ54MhL00GGOAgzKX'
+stripe.api_key = 'sk_test_51O6HLAL2LHXuITvYbJysUSYDkuAhDf26IHDJQ2n7IyVysdv5ahjU4Ra8pikfRAWypGWl7BTKZXp0q2QQzXlMK1dA00TnSYnPFL'
 
 import os, sys
 
