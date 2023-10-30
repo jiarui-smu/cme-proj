@@ -1,0 +1,275 @@
+version: "3.8"
+
+volumes:
+  pgdata: 
+  kongadata:
+  rabbitmq_data:
+
+networks:
+  kong-net:
+    driver: bridge
+
+services: 
+
+##################################
+# Clothes: The Clothes microservice
+##################################
+  clothes:
+    build:
+      context: Files/
+      dockerfile: clothes.Dockerfile
+    image: g10t2/test_clothes:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/clothes
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5000:5000"
+
+##################################
+# Make_payment: The make_payment complex microservice
+##################################
+  make_payment:
+    build:
+      context: Files/
+      dockerfile: make_payment.Dockerfile
+    image: g10t2/test_payment:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/make_payment
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5100:5100"
+    depends_on:
+      - rabbitmq
+
+##################################
+# Order: The Order microservice
+##################################
+  order:
+    build:
+      context: Files/
+      dockerfile: order.Dockerfile
+    image: g10t2/test_order:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/order1
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5001:5001"
+    depends_on:
+      - make_payment
+
+##################################
+# Invoice: The Invoice microservice
+##################################
+  invoice:
+    build:
+      context: Files/
+      dockerfile: invoice.Dockerfile
+    image: g10t2/test_invoice:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/invoice
+      PYTHONUNBUFFERED: 1 
+    ports:
+      - "5002:5002"
+    depends_on:
+      - make_payment
+
+##################################
+# Customer: The Customer microservice
+##################################
+  customer:
+    build:
+      context: Files/
+      dockerfile: customer.Dockerfile
+    image: g10t2/test_customer:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/customer
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5003:5003"
+
+##################################
+# Refund_order: The Refund_order complex microservice
+##################################
+  refund_order:
+    build:
+      context: Files/
+      dockerfile: refund_order.Dockerfile
+    image: g10t2/test_refund_order:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/refund_order
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5111:5111"
+
+##################################
+# Refund: The Refund microservice
+##################################
+  refund:
+    build:
+      context: Files/
+      dockerfile: refund.Dockerfile
+    image: g10t2/test_refund:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/refund
+      PYTHONUNBUFFERED: 1 
+    ports:
+      - "5010:5010"
+    depends_on:
+      - refund_order
+
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Files:/usr/share/nginx/html
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: esd-rabbit
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+        - "5672:5672"
+        - "15672:15672"    
+    volumes: 
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  
+  # amqp-setup:
+  #   build:
+  #     context: Files/
+  #     dockerfile: amqp.Dockerfile
+  #   environment:
+  #     AMQP_HOST: rabbitmq
+  #   depends_on:
+  #     - rabbitmq
+
+
+##################################
+# Announcement: The Announcement microservice (AMQP)
+##################################
+  announcement:
+    build:
+        context: Files/
+        dockerfile: announcement.Dockerfile
+    image: g10t2/test_announcement:esd
+    restart: always
+    depends_on:
+        - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+##################################
+# Sendpromo: The Sendpromo complex microservice
+##################################
+  sendpromotion:
+    build:
+      context: Files/
+      dockerfile: sendpromotion.Dockerfile
+    image: g10t2/test_sendpromo:esd #image has error
+    restart: always
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/sendpromo
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5007:5007"
+    depends_on:
+        - rabbitmq
+
+
+    
+  # #######################################
+  # # Postgres: The database used by Kong
+  # #######################################
+  # kong-database:
+  #   image: postgres:9.6
+  #   restart: always
+  #   networks:
+  #     - kong-net
+  #   environment:
+  #     POSTGRES_DB: kong
+  #     POSTGRES_USER: kong
+  #     POSTGRES_PASSWORD: password
+  #   ports:
+  #     - "5432:5432"
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready", "-U", "kong"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+
+  # #######################################
+  # # Kong database migration
+  # #######################################
+  # kong-migration:
+  #   image: kong:2.0.4
+  #   command: "kong migrations bootstrap"
+  #   restart: on-failure
+  #   networks:
+  #     - kong-net
+  #   environment:
+  #     KONG_DATABASE: postgres
+  #     KONG_PG_HOST: kong-database
+  #     KONG_PG_USER: kong
+  #     KONG_PG_PASSWORD: password
+  #   depends_on:
+  #     - kong-database
+
+  # #######################################
+  # # Kong: The API Gateway
+  # #######################################
+  # kong:
+  #   image: kong:2.0.4
+  #   restart: always
+  #   networks:
+  #     - kong-net
+  #   environment:
+  #     KONG_DATABASE: postgres
+  #     KONG_PG_HOST: kong-database
+  #     KONG_PG_USER: kong
+  #     KONG_PG_PASSWORD: password
+  #     KONG_PROXY_LISTEN: 0.0.0.0:8000
+  #     KONG_ADMIN_LISTEN: 0.0.0.0:8001
+  #   depends_on:
+  #     - kong-migration
+  #   ports:
+  #     - "8000:8000"
+  
+  # #######################################
+  # # Konga: Kong GUI
+  # #######################################
+  # konga:
+  #   image: pantsel/konga
+  #   restart: always
+  #   networks:
+  #       - kong-net
+  #   environment:
+  #     DB_ADAPTER: postgres
+  #     DB_HOST: kong-database
+  #     DB_USER: kong
+  #     DB_PASSWORD: password
+  #     DB_DATABASE: konga_db
+  #   depends_on:
+  #     - kong
+  #   ports:
+  #     - "1337:1337"
+  #   volumes:
+  #     - kongadata:/app/kongadata

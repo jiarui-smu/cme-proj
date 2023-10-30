@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      /* background-color: #f1f1f1; */
+      background-image: url('img/loginbg.jpeg');
+      background-size: cover;
+    }
+    
+    .container {
+      
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 50px auto;
+      max-width: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    input[type=text], input[type=password] {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    img{
+      max-width: 200px; /* set the maximum width of the image */
+      height: auto; /* maintain aspect ratio */
+      border-radius: 50%; /* create rounded corners */
+
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="img/FASHION FIESTA.png" alt="Logo"> 
+   
+    <form action="home.html" method="get">
+      <h2>Login</h2>
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Enter username">
+      
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter password">
+      
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
+
+<script>
+    const usernameInput = document.getElementById("username");
+    usernameInput.addEventListener('input',()=>{
+        localStorage.setItem('username',usernameInput.value);
+    })
+</script>
