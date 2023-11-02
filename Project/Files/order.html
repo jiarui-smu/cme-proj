@@ -76,7 +76,7 @@
         // Change serviceURL to your own  
             // var serviceURL = "http://127.0.0.1:5000/clothes";
             // var serviceURL = "http://localhost:8000/api/v1/order1";
-            var serviceURL = "http://localhost:5001/order1";
+            var serviceURL = "http://localhost:5000/order1";
             try {
                 const response = await fetch(serviceURL, { method: 'GET' });
                 const result = await response.json();
@@ -152,33 +152,34 @@
         });
         
         function changeMe(val) {
-            //console.log(val);
-            $(async() => {
-                var serviceURL1 = "http://localhost:5001/order1/refund/" + val;
-                try {
-                  const response1 = await fetch(serviceURL1, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' }
-                  });
-                  const statusList = await response1.json();
-                  if (response1.status === 200 || response1.status === 201) {
-                            // success case
-                            //console.log(result)
-                            //$('#main-container').append("<label>" + isbnNumber + " added successfully!</label>");
-                            location.reload()
-                        } else if (response1.status == 404) {
-                            // No books
-                            error++;
-                            // showError(result.message);
-                        } else {
-                            // unexpected outcome, throw the error
-                            error++;
-                            throw response1.status;
-                    }
-                } catch (error) {
-                  showError('There is a problem retrieving transaction id, please try again later.<br />' + error);
-                }
-            });
+          return "No refunds"
+            // //console.log(val);
+            // $(async() => {
+            //     var serviceURL1 = "http://localhost:5000/order1/refund/" + val;
+            //     try {
+            //       const response1 = await fetch(serviceURL1, {
+            //         method: 'PUT',
+            //         headers: { 'Content-Type': 'application/json' }
+            //       });
+            //       const statusList = await response1.json();
+            //       if (response1.status === 200 || response1.status === 201) {
+            //                 // success case
+            //                 //console.log(result)
+            //                 //$('#main-container').append("<label>" + isbnNumber + " added successfully!</label>");
+            //                 location.reload()
+            //             } else if (response1.status == 404) {
+            //                 // No books
+            //                 error++;
+            //                 // showError(result.message);
+            //             } else {
+            //                 // unexpected outcome, throw the error
+            //                 error++;
+            //                 throw response1.status;
+            //         }
+            //     } catch (error) {
+            //       showError('There is a problem retrieving transaction id, please try again later.<br />' + error);
+            //     }
+            // });
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
