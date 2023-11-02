@@ -33,7 +33,7 @@
         }
     </style>
 </head>
-  <body onload="promoAlert()">
+  <body >
 
     <div id="main-container" class="container" style="margin-top:20px">
         
@@ -122,17 +122,17 @@
         }
 
        // Alert function and store the promotion message in local storage 
-       function promoAlert(){
-        const promoData = JSON.parse(localStorage.getItem('promo_msg'));
-        console.log(promoData);
-        if (username != 'admin' && promoData!= null ){
-                alert(promoData)
-                localStorage.removeItem('promo_msg');
-            }
-            else{
-                console.log('admin')
-            }
-        }
+    //    function promoAlert(){
+    //     const promoData = JSON.parse(localStorage.getItem('promo_msg'));
+    //     console.log(promoData);
+    //     if (username != 'admin' && promoData!= null ){
+    //             alert(promoData)
+    //             localStorage.removeItem('promo_msg');
+    //         }
+    //         else{
+    //             console.log('admin')
+    //         }
+    //     }
 
         function deleteMe(e, count) {
             if (confirm("Confirm Delete?") == true) {
@@ -233,7 +233,7 @@
                     clothesList.push(i[3])
                 }
                 finalList = clothesList.join(", ");
-                alert("Checkout successful with the following order: " + finalList + "\nYou will soon receive an SMS with an invoice.");
+                alert("Checkout successful with the following order: " + finalList);
                 //location.reload();
             }   
                 

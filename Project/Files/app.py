@@ -452,7 +452,9 @@ def make_payment():
             # do the actual work
             # 1. Send order info {cart items}
             result = processPaymentRequest(payment)
-            return jsonify(result), result["code"]
+            print(result)
+            print(result["code"])
+            return result["code"], jsonify(result)
 
         except Exception as e:
             # Unexpected error in code
@@ -479,7 +481,7 @@ def processPaymentRequest(payment):
     print('\n-----Invoking Order Microservice-----')
     order_result = create_order(payment)
     print('order_result:', order_result)
-    code = order_result["code"]
+    code = order_result[1]
     if code not in range(200, 300):
         return {
             "code": 500,
@@ -489,10 +491,10 @@ def processPaymentRequest(payment):
 
     return {
         "code": 201,
-        "data": {
-            "order_result": order_result
-            # "invoice_result": invoice_result
-            }
+        # "data": {
+        #     "order_result": order_result
+        #     # "invoice_result": invoice_result
+        #     }
     }
 
 def create_order(data):
