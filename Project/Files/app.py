@@ -4,14 +4,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
 import json
+import os
+import settings
 
 import stripe
 # This is your test secret API key.
 stripe.api_key = 'sk_test_51O6HLAL2LHXuITvYbJysUSYDkuAhDf26IHDJQ2n7IyVysdv5ahjU4Ra8pikfRAWypGWl7BTKZXp0q2QQzXlMK1dA00TnSYnPFL'
 
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/quikkarts'
-# app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/quikkarts'
+app.config['SQLALCHEMY_DATABASE_URI'] = settings.SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
