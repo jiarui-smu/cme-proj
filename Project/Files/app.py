@@ -754,7 +754,7 @@ def create_checkout_session(product_ids):
     checkout_session = stripe.checkout.Session.create(
         line_items=testList,
         mode="payment",
-        success_url="http://127.0.0.1:5566/Project/Files/home.html", # TODO: REPLACE WITH FRONT END URL
+        success_url="https://quikkarts.s3.ap-southeast-1.amazonaws.com/home.html", # TODO: REPLACE WITH FRONT END URL
         # success_url=finalizePayment(
         #     productList[-1] + "?session_id={CHECKOUT_SESSION_ID}"
         # ),
